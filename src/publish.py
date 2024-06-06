@@ -3,11 +3,11 @@ import os
 from dotenv import load_dotenv
 from huggingface_hub import ModelCard, ModelCardData
 
-from models import load_embedding_model
+from models import load_tbert_encoder
 
 load_dotenv()
 
-MODEL_NAME = "tbert-encoder"
+MODEL_NAME = "tbert-siamese-encoder"
 
 
 def create_model_card():
@@ -47,17 +47,20 @@ def create_model_card():
 
 
 if __name__ == "__main__":
-    model_path = os.path.expanduser(os.environ["MODEL_PATH"])
+    state_path = os.path.expanduser(os.environ["STATE_PATH"])
 
     # Load model and tokenizer
-    model, tokenizer = load_embedding_model(model_path)
+    model, tokenizer = load_tbert_encoder(state_path)
     model_card = create_model_card()
 
     # Save model and tokenizer
-    repo_name = "thearod5/tbert-encoder"  # Change this to your Hugging Face model repo name
+    repo_name = f"thearod5/{MODEL_NAME}"  # Change this to your Hugging Face model repo name
 
+    print("Saving model...")
     model.push_to_hub(repo_name)
+    print("Saving tokenizer...")
     tokenizer.push_to_hub(repo_name)
+    print("Saving model card...")
     model_card.push_to_hub(repo_name)
 
     # Log job finished.

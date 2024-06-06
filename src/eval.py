@@ -1,12 +1,10 @@
-import os
-
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 
-from models import load_embedding_model
+from models import load_tbert_encoder
 
 
-def eval(model: SentenceTransformer, tokenizer):
+def eval(model: SentenceTransformer):
     # Test
     texts = [
         "Display Artifacts",
@@ -24,13 +22,11 @@ def eval(model: SentenceTransformer, tokenizer):
 
 
 if __name__ == "__main__":
-    model_path = os.path.expanduser(os.environ["MODEL_PATH"])
-
     # Load model and tokenizer
-    model, tokenizer = load_embedding_model(model_path)
+    model, tokenizer = load_tbert_encoder()
 
     # Evaluate model
-    similarity_matrix = eval(model, tokenizer)
+    similarity_matrix = eval(model)
 
     # Log job finished.
     print("Similarity Matrix:", similarity_matrix)
