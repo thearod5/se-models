@@ -2,17 +2,16 @@ import os
 
 import torch
 from dotenv import load_dotenv
-from transformers import AutoModel, AutoTokenizer, PreTrainedModel, PretrainedConfig, RobertaConfig
+from transformers import AutoModel, AutoTokenizer, PreTrainedModel, RobertaConfig
 
 load_dotenv()
 
 
-class TBertEncoderConfig(PretrainedConfig):
+class TBertEncoderConfig(RobertaConfig):
     model_type = "tbert_encoder"
 
-    def __init__(self, base_model_config=RobertaConfig(), base_model_path: str = "microsoft/codebert-base", **kwargs):
+    def __init__(self, base_model_path: str = "microsoft/codebert-base", **kwargs):
         super().__init__(**kwargs)
-        self.base_model_config = base_model_config
         self.base_model_path = base_model_path
 
 
@@ -31,7 +30,7 @@ class TBertEncoder(PreTrainedModel):
         return embeddings
 
 
-def load_embedding_model(model_path: str, base_model_path: str):
+def load_embedding_model(model_path: str, base_model_path: str = "microsoft/codebert-base"):
     model_path = os.path.expanduser(model_path)
     tokenizer = AutoTokenizer.from_pretrained(base_model_path)
     model = TBertEncoder(TBertEncoderConfig())

@@ -1,9 +1,6 @@
 import os
 
-import torch
 from dotenv import load_dotenv
-from huggingface_hub import HfApi, HfFolder, Repository, create_repo
-from sklearn.metrics.pairwise import cosine_similarity
 
 from models import load_embedding_model
 
@@ -42,49 +39,13 @@ def create_model_card():
 
 if __name__ == "__main__":
     model_path = os.path.expanduser(os.environ["MODEL_PATH"])
-    base_model_path = "microsoft/codebert-base"
     repo_name = "thearod5/tbert-encoder"  # Change this to your Hugging Face model repo name
 
     # Load model and tokenizer
-    model, tokenizer = load_embedding_model(model_path, base_model_path)
+    model, tokenizer = load_embedding_model(model_path)
 
     # Save model and tokenizer
-    model.save_pretrained(repo_name)
-    tokenizer.save_pretrained(repo_name)
+    model.push_to_hub("tbert-encoder")
 
-    # Create a model card
-    model_card = create_model_card()
-    with open(os.path.join(repo_name, "README.md"), "w") as f:
-        f.write(model_card)
-
-    # Publish to Hugging Face
-    api = HfApi()
-    username = HfFolder.get_token().split('-')[0]  # Assumes token is in the format 'username-xxxxxx'
-
-    # Create repo if it does not exist
-    create_repo(repo_id=repo_name, repo_type="model", token=HfFolder.get_token())
-
-    # Push to Hugging Face
-    repo = Repository(local_dir=repo_name, clone_from=repo_name, use_auth_token=True)
-    repo.push_to_hub(commit_message="Initial commit of the model")
-
-    print("Model published to Hugging Face.")
-
-    # Test
-    texts = [
-        "Display Artifacts",
-        "A table view should be provided to display all project artifacts.",
-        "The system should be able to generate documentation for a set of artifacts."
-    ]
-    inputs = tokenizer(texts, return_tensors="pt", padding=True, truncation=True)
-
-    # Embeddings
-    with torch.no_grad():
-        embeddings = model(**inputs)
-
-    parent_embedding = embeddings[0:1]
-    children_embeddings = embeddings[1:]
-
-    # Compute cosine similarity
-    score = cosine_similarity(parent_embedding, children_embeddings)
-    print("Done", score)
+    # Log job finished.
+    print("Done.")
