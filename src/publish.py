@@ -3,7 +3,7 @@ import os
 from dotenv import load_dotenv
 from huggingface_hub import ModelCard, ModelCardData
 
-from models import load_tbert_encoder
+from factory import load_tbert_encoder
 
 load_dotenv()
 
@@ -47,19 +47,17 @@ def create_model_card():
 
 
 if __name__ == "__main__":
-    state_path = os.path.expanduser(os.environ["STATE_PATH"])
+    user_name = os.environ["HF_USER_NAME"]
 
     # Load model and tokenizer
-    model, tokenizer = load_tbert_encoder(state_path)
+    model = load_tbert_encoder()
     model_card = create_model_card()
 
     # Save model and tokenizer
-    repo_name = f"thearod5/{MODEL_NAME}"  # Change this to your Hugging Face model repo name
+    repo_name = f"{user_name}/{MODEL_NAME}"  # Change this to your Hugging Face model repo name
 
     print("Saving model...")
     model.push_to_hub(repo_name)
-    print("Saving tokenizer...")
-    tokenizer.push_to_hub(repo_name)
     print("Saving model card...")
     model_card.push_to_hub(repo_name)
 
