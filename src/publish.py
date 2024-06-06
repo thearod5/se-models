@@ -1,14 +1,17 @@
 import os
 
 from dotenv import load_dotenv
+from huggingface_hub import ModelCard, ModelCardData
 
 from models import load_embedding_model
 
 load_dotenv()
 
+MODEL_NAME = "tbert-encoder"
+
 
 def create_model_card():
-    card = """
+    model_card_content = """
     # Model Card for tbert-embedding
     
     ## Model Description
@@ -34,18 +37,28 @@ def create_model_card():
     }
     ```
     """
+    card_data = ModelCardData(
+        language="en",
+        license='mit',
+        model_name=MODEL_NAME
+    )
+    card = ModelCard.from_template(card_data=card_data, template_path=None, content=model_card_content)
     return card
 
 
 if __name__ == "__main__":
     model_path = os.path.expanduser(os.environ["MODEL_PATH"])
-    repo_name = "thearod5/tbert-encoder"  # Change this to your Hugging Face model repo name
 
     # Load model and tokenizer
     model, tokenizer = load_embedding_model(model_path)
+    model_card = create_model_card()
 
     # Save model and tokenizer
-    model.push_to_hub("tbert-encoder")
+    repo_name = "thearod5/tbert-encoder"  # Change this to your Hugging Face model repo name
+
+    model.push_to_hub(repo_name)
+    tokenizer.push_to_hub(repo_name)
+    model_card.push_to_hub(repo_name)
 
     # Log job finished.
-    print("Done.")
+    print("Model published to Hugging Face.")
