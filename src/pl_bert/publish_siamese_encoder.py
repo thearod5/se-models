@@ -3,7 +3,7 @@ import os
 from dotenv import load_dotenv
 from huggingface_hub import ModelCard, ModelCardData
 
-from factory import load_tbert_encoder
+from pl_bert.pl_bert_factory import load_tbert_siamese_encoder
 
 load_dotenv()
 
@@ -50,7 +50,7 @@ if __name__ == "__main__":
     user_name = os.environ["HF_USER_NAME"]
 
     # Load model and tokenizer
-    model = load_tbert_encoder()
+    model = load_tbert_siamese_encoder()
     model_card = create_model_card()
 
     # Save model and tokenizer
