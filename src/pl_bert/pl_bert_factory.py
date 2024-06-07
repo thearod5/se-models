@@ -1,16 +1,11 @@
 import os
-from typing import Dict
 
 import torch
 from transformers import RobertaConfig
 
-from models.tbert_siamese_cross_encoder import TBertSiameseCrossEncoder
-from models.tbert_siamese_encoder import TBertSiameseEncoder
-
-
-def extract_state(state_dict: Dict, prefix: str):
-    return {k.removeprefix(prefix): state_dict[k] for k in list(state_dict.keys()) if
-            prefix in k}
+from pl_bert.models.pl_bert_siamese_cross_encoder import TBertSiameseCrossEncoder
+from pl_bert.models.pl_bert_siamese_encoder import TBertSiameseEncoder
+from util import extract_state
 
 
 def load_tbert_siamese_encoder(state_path: str = None, state_prefix: str = "cbert."):
